@@ -43,6 +43,10 @@ public class BottlePost {
 		return strBuilder.toString();
 	}
 	
+	public String getDecryptedText() {
+		return msg;
+	}
+	
 	public int getEncryption() {
 		return encryption;
 	}
