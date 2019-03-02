@@ -22,9 +22,8 @@ public class JSONObjects {
 				.parse(new FileReader(getClass().getClassLoader().getResource(filePath).getFile()));
 	}
 	
-	public Object getObject(String key) {
+	public Object getObj(String key) {
 		return jsonObj.get(key);
 	}
-	
 	
 }
