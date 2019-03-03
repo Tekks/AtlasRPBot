@@ -6,72 +6,65 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.apache.log4j.Logger;
 import org.json.simple.parser.ParseException;
+import wtf.tks.bots.Commands.BottlePost;
 import wtf.tks.bots.JSONObjects;
-import wtf.tks.bots.Tools.BottlePost;
+import wtf.tks.bots.Launcher;
 
 import java.io.IOException;
 
 public class Messages extends ListenerAdapter {
 	
 	private static Logger log = Logger.getRootLogger();
-	JSONObjects jsonObj;
+	private JSONObjects jsonObj;
+	private JDA jda;
+	
+	private String PREFIX;
 	
 	private Guild guild;
 	private TextChannel textChannel;
-	private Member member;
 	private User author;
 	private Message message;
 	private MessageChannel channel;
-	private String msg;
+	private String displayMessage;
 	private BottlePost bottlePost;
+	private String rawMessage;
 	
-	private JDA jda;
 	
-	public Messages(JDA jda) throws IOException, ParseException {
-		jsonObj = new JSONObjects("config/botConfig.json");
-		this.jda = jda;
+	
+	
+	
+	public Messages() throws IOException, ParseException {
+		jsonObj = Launcher.getJsonInstance();
+		this.jda = Launcher.getInstance();
 	}
 	
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
 		
+		PREFIX = jsonObj.read("prefix", String.class);
+		
 		author = event.getAuthor();
 		message = event.getMessage();
 		channel = event.getChannel();
-		
-		msg = message.getContentDisplay();
-		
+		displayMessage = message.getContentDisplay();
 		if (author.isBot()) {
 			return;
 		}
 		
+		
 		if (event.isFromType(ChannelType.PRIVATE)) {
-			log.info("Message Received: " + event.getAuthor());
-			
-			channel = jda
-					.getTextChannelById(Long.valueOf((String) jsonObj.getObj("chAdminBottlePost")));
-			
-			bottlePost = new BottlePost(msg);
-			
-			String strTemp = "**User:** "
-							 +  event.getAuthor().getAsTag() + " ###" + event.getAuthor().getId() + "###"
-							 + "\n**EncryptionLevel:** " + bottlePost.getEncryption() + "%"
-							 + "\n**Message:**\n"
-							 + bottlePost.getDecryptedText()
-							 + "\n\n**Encrypted Message:**\n"
-							 + bottlePost.getEncryptText();
-			channel.sendMessage(strTemp).queue(message -> {
-				getSetMessage(message);
-			});
-			
-			
+			guild = jda.getGuildById(jsonObj.read("serverId", String.class));
+			if (guild.getMember(event.getAuthor()).getRoles()
+					.contains(guild.getRoleById(jsonObj.read("rolePlayerId", String.class)))) {
+				log.info("Message Received: " + event.getAuthor());
+				if (displayMessage.startsWith(PREFIX + BottlePost.COMMAND)) {
+					bottlePost = new BottlePost(event);
+				} else if (displayMessage.startsWith(PREFIX + BottlePost.COMMAND)) {
+					//ToDo: Expander
+				}
+			} else {
+				event.getChannel().sendMessage("❌ Keine gültige Berechtigung").queue();
+			}
 		}
 	}
-	
-	private Message getSetMessage(Message lMessage) {
-		lMessage.addReaction((String) jsonObj.getObj("votePositiveEmoji")).queue();
-		lMessage.addReaction((String) jsonObj.getObj("voteNegativeEmoji")).queue();
-		return lMessage;
-	}
-	
 }
