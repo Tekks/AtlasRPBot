@@ -1,8 +1,14 @@
 {
+	"token": "Token",
+	"prefix": "<",
+	"serverId": "551411897883164683",
 	"chAdminBottlePost": "551480915935887391",
 	"chBottlePost": "551508951494164495",
 	"votePositiveEmoji": "\uD83D\uDC4D",
 	"voteNegativeEmoji": "\uD83D\uDC4E",
-	"bottlePostAcept": "Dein Scheis wurde angenommen. bruh",
-	"bottlePostDecl": "Dein Scheis wurde abgelehnt. bruh"
+	"bottlePostAccept": "Flaschenpost angenommen. Flaschen sind allerdings nie ganz dicht. Einige Buchstaben sind verschwommen",
+	"bottlePostDecline": "Die Flasche kam leider nie an, sie wurde vielleicht von einem Wal verschlungen (Bitte wende dich bei Fragen an einen Moderator / Admin)",
+	"roleAdminId": "551412440815108096",
+	"rolePlayerId": "551549492189462531",
+	"roleNewMemberId": "551752588836601896"
 }
