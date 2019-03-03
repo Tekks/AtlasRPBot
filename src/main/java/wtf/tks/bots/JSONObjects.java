@@ -22,8 +22,12 @@ public class JSONObjects {
 				.parse(new FileReader(getClass().getClassLoader().getResource(filePath).getFile()));
 	}
 	
-	public Object getObj(String key) {
-		return jsonObj.get(key);
-	}
 	
+	public <T> T read(String key, Class<T> clazz) {
+		try {
+			return clazz.cast(jsonObj.get(key));
+		} catch (ClassCastException e) {
+			return null;
+		}
+	}
 }
