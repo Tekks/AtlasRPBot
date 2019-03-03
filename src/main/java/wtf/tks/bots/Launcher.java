@@ -3,8 +3,9 @@ package wtf.tks.bots;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.Game;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.json.simple.parser.ParseException;
 import wtf.tks.bots.Handlers.Membership;
 import wtf.tks.bots.Handlers.Messages;
@@ -18,18 +19,15 @@ public class Launcher {
 	private static Logger log = Logger.getRootLogger();
 	
 	private static JDA jda;
-	private static JSONObjects jsonObj;
 	
 	public static void main(String[] args)
 			throws LoginException, InterruptedException, IOException, ParseException {
 		
-		String log4jConfPath = "log4j.properties";
-		PropertyConfigurator.configure(log4jConfPath);
+		BasicConfigurator.configure();
+		Logger.getRootLogger().setLevel(Level.INFO);
 		
-		jsonObj = new JSONObjects("config/botConfig.json");
-		
-		jda = new JDABuilder(jsonObj.read("token", String.class))
-				.setGame(Game.listening("<help"))
+		jda = new JDABuilder(Config.token)
+				.setGame(Game.listening(Config.prefix + "help"))
 				.build();
 		jda.awaitReady();
 		
@@ -40,9 +38,5 @@ public class Launcher {
 	
 	public static JDA getInstance() {
 		return jda;
-	}
-	
-	public static JSONObjects getJsonInstance() {
-		return jsonObj;
 	}
 }
