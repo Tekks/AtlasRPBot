@@ -3,25 +3,22 @@ package wtf.tks.bots.Commands;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import wtf.tks.bots.JSONObjects;
+import wtf.tks.bots.Config;
 import wtf.tks.bots.Launcher;
 
 import java.util.Random;
 
 public class BottlePost {
 	
-	public final static String COMMAND = "bottlepost";
+	public final static String COMMAND = "flaschenpost";
 	
-	JSONObjects jsonObj;
 	private JDA jda;
 	private String rawMessage;
 	private int encryption;
 	private Random rng;
 	
 	private MessageReceivedEvent event;
-	private User author;
 	private Message message;
 	private MessageChannel channel;
 	private String displayMessage;
@@ -31,22 +28,20 @@ public class BottlePost {
 	
 	public BottlePost(MessageReceivedEvent event) {
 		jda = Launcher.getInstance();
-		jsonObj = Launcher.getJsonInstance();
 		rng = new Random();
-		
 		this.event = event;
-		this.author = event.getAuthor();
 		this.message = event.getMessage();
 		this.channel = event.getChannel();
 		
 		displayMessage = message.getContentDisplay();
 		
-		this.rawMessage = displayMessage.replaceAll("(.*)" + BottlePost.COMMAND + " ", "");
-		;
+		rawMessage = displayMessage.replaceAll("(.*)" + BottlePost.COMMAND, "");
+		if (Character.isWhitespace(rawMessage.charAt(0))) {
+			rawMessage = rawMessage.replaceFirst(" ", "");
+		}
 		this.encryption = setEncryption();
 		
-		chAdminBottlePost = jda.getTextChannelById(
-				jsonObj.read("chAdminBottlePost", String.class));
+		chAdminBottlePost = jda.getTextChannelById(Config.chAdminPost);
 		
 		makeMessage();
 	}
@@ -63,11 +58,12 @@ public class BottlePost {
 	
 	private void makeMessage() {
 		channel.sendMessage("**Nachricht**\n" + rawMessage +
-							"\n\nwurde zur Freigabe an einen Moderator/Admin versendet").queue();
+							"\n\nwurde zur Freigabe an einen Moderator / Admin versendet").queue();
 		String strTemp = "**User:** "
 						 + event.getAuthor().getAsTag() + " ###" + event.getAuthor().getId() +
 						 "###"
 						 + "\n**EncryptionLevel:** " + this.getEncryption() + "%"
+						 + "\n**Type:** " + BottlePost.COMMAND
 						 + "\n**Message:**\n"
 						 + this.getDecryptedText()
 						 + "\n\n**Encrypted Message:**\n"
@@ -77,8 +73,8 @@ public class BottlePost {
 	
 	
 	private Message getSetMessage(Message lMessage) {
-		lMessage.addReaction(jsonObj.read("votePositiveEmoji", String.class)).queue();
-		lMessage.addReaction(jsonObj.read("voteNegativeEmoji", String.class)).queue();
+		lMessage.addReaction(Config.votePositiveEmoji).queue();
+		lMessage.addReaction(Config.voteNegativeEmoji).queue();
 		return lMessage;
 	}
 	
