@@ -14,8 +14,10 @@ public class Help {
 	
 	private JDA jda;
 	
+	
 	public Help(MessageReceivedEvent event) {
-		jda = Launcher.getInstance();
+		jda = Launcher.getJdaInstance();
+		
 		MessageBuilder mb = new MessageBuilder();
 		mb.setEmbed(new EmbedBuilder()
 				.setTitle("Hilfe")

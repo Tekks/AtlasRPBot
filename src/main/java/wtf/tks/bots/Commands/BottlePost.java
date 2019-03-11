@@ -14,34 +14,37 @@ public class BottlePost {
 	public final static String COMMAND = "flaschenpost";
 	
 	private JDA jda;
+	private Config config;
+	
 	private String rawMessage;
 	private int encryption;
 	private Random rng;
-	
 	private MessageReceivedEvent event;
 	private Message message;
 	private MessageChannel channel;
 	private String displayMessage;
-	
 	private MessageChannel chAdminBottlePost;
 	
 	
 	public BottlePost(MessageReceivedEvent event) {
-		jda = Launcher.getInstance();
+		jda = Launcher.getJdaInstance();
+		config = Launcher.getConfigInstance();
+		
+		chAdminBottlePost = jda.getTextChannelById(config.getProp("chAdminPost"));
 		rng = new Random();
 		this.event = event;
 		this.message = event.getMessage();
 		this.channel = event.getChannel();
 		
 		displayMessage = message.getContentDisplay();
-		
 		rawMessage = displayMessage.replaceAll("(.*)" + BottlePost.COMMAND, "");
-		if (Character.isWhitespace(rawMessage.charAt(0))) {
-			rawMessage = rawMessage.replaceFirst(" ", "");
-		}
-		this.encryption = setEncryption();
 		
-		chAdminBottlePost = jda.getTextChannelById(Config.chAdminPost);
+		if (Character.isWhitespace(rawMessage.charAt(0))) {
+			rawMessage.replaceFirst(" ", "");
+		}
+		
+		encryption = setEncryption();
+		
 		
 		makeMessage();
 	}
@@ -73,14 +76,13 @@ public class BottlePost {
 	
 	
 	private Message getSetMessage(Message lMessage) {
-		lMessage.addReaction(Config.votePositiveEmoji).queue();
-		lMessage.addReaction(Config.voteNegativeEmoji).queue();
+		lMessage.addReaction(config.getProp("votePositiveEmoji")).queue();
+		lMessage.addReaction(config.getProp("voteNegativeEmoji")).queue();
 		return lMessage;
 	}
 	
 	
 	public String getEncryptText() {
-		
 		int encryptChars = rawMessage.length() * encryption / 100;
 		StringBuilder strBuilder = new StringBuilder(rawMessage);
 		
@@ -99,6 +101,7 @@ public class BottlePost {
 	public String getDecryptedText() {
 		return rawMessage;
 	}
+	
 	
 	public int getEncryption() {
 		return encryption;

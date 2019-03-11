@@ -17,10 +17,14 @@ public class Reactions extends ListenerAdapter {
 	private static Logger log = Logger.getRootLogger();
 	
 	private JDA jda;
+	private Config config;
+	
 	
 	public Reactions() {
-		this.jda = Launcher.getInstance();
+		jda = Launcher.getJdaInstance();
+		config = Launcher.getConfigInstance();
 	}
+	
 	
 	@Override
 	public void onGenericMessageReaction(GenericMessageReactionEvent event) {
@@ -28,12 +32,11 @@ public class Reactions extends ListenerAdapter {
 			return;
 		}
 		
-		
 		if (event.getReaction().getTextChannel().getId()
-				.equals(jda.getTextChannelById(Config.chAdminPost)
+				.equals(jda.getTextChannelById(config.getProp("chAdminPost"))
 						.getId())) {
 			
-			String rawMessage = jda.getTextChannelById(Config.chAdminPost)
+			String rawMessage = jda.getTextChannelById(config.getProp("chAdminPost"))
 					.getMessageById(event.getMessageId()).complete().getContentDisplay();
 			String messageId = event.getMessageId();
 			String authorId = splitMessage(rawMessage, "(?<=###)(.*)(?=###)");
@@ -42,60 +45,90 @@ public class Reactions extends ListenerAdapter {
 			if (splitMessage(rawMessage, "(?<=Type:\\*\\*).*").trim().
 					equals(Gossip.COMMAND)) {
 				
-				if (reaction.equals(Config.votePositiveEmoji)) {
-					reactionHandler(reaction, messageId, authorId, Config.chGossip,
-							Config.gossipAccept);
-				} else if (reaction.equals(Config.voteNegativeEmoji)) {
-					reactionHandler(reaction, messageId, authorId, Config.chGossip,
-							Config.gossipDecline);
+				if (reaction.equals(config.getProp("votePositiveEmoji"))) {
+					reactionHandler(reaction, messageId, authorId, config.getProp("chGossip"),
+							config.getProp("gossipAccept"));
+				} else if (reaction.equals(config.getProp("voteNegativeEmoji"))) {
+					reactionHandler(reaction, messageId, authorId, config.getProp("chGossip"),
+							config.getProp("gossipDecline"));
 				}
 			} else if (splitMessage(rawMessage, "(?<=Type:\\*\\*).*").trim()
 					.equals(BottlePost.COMMAND)) {
 				
-				if (reaction.equals(Config.votePositiveEmoji)) {
-					reactionHandler(reaction, messageId, authorId, Config.chBottlePost,
-							Config.bottlePostAccept);
-				} else if (reaction.equals(Config.voteNegativeEmoji)) {
-					reactionHandler(reaction, messageId, authorId, Config.chBottlePost,
-							Config.bottlePostDecline);
+				if (reaction.equals(config.getProp("votePositiveEmoji"))) {
+					reactionHandler(reaction, messageId, authorId, config.getProp("chBottlePost"),
+							config.getProp("bottlePostAccept"));
+				} else if (reaction.equals(config.getProp("voteNegativeEmoji"))) {
+					reactionHandler(reaction, messageId, authorId, config.getProp("chBottlePost"),
+							config.getProp("bottlePostDecline"));
 				}
+			}
+			
+			
+			if (event.getReaction().getReactionEmote().getName()
+					.equals(config.getProp("votePositiveEmoji"))) {
+				postMsg(event.getMessageId(), config.getProp("chBottlePost"));
+				sendConfirmation(splitMessage(
+						jda.getTextChannelById(config.getProp("chAdminPost"))
+								.getMessageById(event.getMessageId()).complete()
+								.getContentDisplay(),
+						"(?<=###)(.*)(?=###)"), config.getProp("bottlePostAccept"));
+				delMsg(event.getMessageId());
+				
+			} else if (event.getReaction().getReactionEmote().getName().equals(
+					config.getProp("voteNegativeEmoji"))) {
+				
+				
+				sendConfirmation(splitMessage(
+						jda.getTextChannelById(config.getProp("chAdminPost"))
+								.getMessageById(event.getMessageId()).complete()
+								.getContentDisplay(),
+						"(?<=###)(.*)(?=###)"), config.getProp("bottlePostDecline"));
+				delMsg(event.getMessageId());
+				
 			}
 		}
 	}
+	
 	
 	private void reactionHandler(
 			String reaction, String messageId,
 			String authorId, String targetChannel, String confirmation) {
 		
-		if (reaction.equals(Config.votePositiveEmoji)) {
+		if (reaction.equals(config.getProp("votePositiveEmoji"))) {
 			postMsg(messageId, targetChannel);
 			sendConfirmation(authorId, confirmation);
-		} else if (reaction.equals(Config.voteNegativeEmoji)) {
+		} else if (reaction.equals(config.getProp("voteNegativeEmoji"))) {
 			sendConfirmation(authorId, confirmation);
 		}
 		delMsg(messageId);
 	}
 	
+	
 	private void delMsg(String Id) {
-		jda.getTextChannelById(Config.chAdminPost)
+		jda.getTextChannelById(config.getProp("chAdminPost"))
 				.deleteMessageById(Id)
 				.queue();
 	}
 	
+	
 	private void postMsg(String Id, String chBottlePost) {
 		String strTmp = splitMessage(
-				jda.getTextChannelById(Config.chAdminPost)
+				jda.getTextChannelById(config.getProp("chAdminPost"))
 						.getMessageById(Id).complete().getContentDisplay(), "().*$");
 		jda.getTextChannelById(chBottlePost)
 				.sendMessage(strTmp).queue();
 	}
 	
+	
 	private String splitMessage(String msg, String regex) {
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(msg);
 		matcher.find();
+		
 		return matcher.group(0);
 	}
+	
 	
 	private void sendConfirmation(String user, String message) {
 		jda.getUserById(user).openPrivateChannel().complete().sendMessage(message).queue();

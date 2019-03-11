@@ -14,18 +14,20 @@ public class Gossip {
 	public final static String COMMAND = "gerücht";
 	
 	private JDA jda;
+	private Config config;
+	
 	private String rawMessage;
 	private Random rng;
-	
 	private MessageReceivedEvent event;
 	private Message message;
 	private MessageChannel channel;
 	private String displayMessage;
-	
 	private MessageChannel chAdminBottlePost;
 	
 	public Gossip(MessageReceivedEvent event) {
-		jda = Launcher.getInstance();
+		jda = Launcher.getJdaInstance();
+		config = Launcher.getConfigInstance();
+		
 		rng = new Random();
 		this.event = event;
 		this.message = event.getMessage();
@@ -33,11 +35,12 @@ public class Gossip {
 		
 		displayMessage = message.getContentDisplay();
 		rawMessage = displayMessage.replaceAll("(.*)" + Gossip.COMMAND, "");
+		
 		if (Character.isWhitespace(rawMessage.charAt(0))) {
-			rawMessage = rawMessage.replaceFirst(" ", "");
+			rawMessage.replaceFirst("(.*)", "");
 		}
 		
-		chAdminBottlePost = jda.getTextChannelById(Config.chAdminPost);
+		chAdminBottlePost = jda.getTextChannelById(config.getProp("chAdminPost"));
 		makeMessage();
 	}
 	
@@ -56,8 +59,8 @@ public class Gossip {
 	
 	
 	private Message getSetMessage(Message lMessage) {
-		lMessage.addReaction(Config.votePositiveEmoji).queue();
-		lMessage.addReaction(Config.voteNegativeEmoji).queue();
+		lMessage.addReaction(config.getProp("votePositiveEmoji")).queue();
+		lMessage.addReaction(config.getProp("voteNegativeEmoji")).queue();
 		return lMessage;
 	}
 }
