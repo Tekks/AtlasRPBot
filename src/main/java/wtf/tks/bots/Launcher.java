@@ -24,13 +24,13 @@ public class Launcher {
 	private static Config config;
 	
 	public static void main(String[] args)
-			throws LoginException, InterruptedException, IOException, ParseException {
+			throws LoginException, InterruptedException, IOException {
 		
 		config = new Config();
 		initLogger();
 		
 		jda = new JDABuilder(config.getProp("token"))
-				.setGame(Game.listening(config.getProp("prefix") + "help"))
+				.setGame(Game.listening("Privat " + config.getProp("prefix") + "hilfe"))
 				.build();
 		jda.awaitReady();
 		
