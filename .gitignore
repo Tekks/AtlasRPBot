@@ -25,4 +25,4 @@
 hs_err_pid*
 
 /atlasRpBot.iml
-/src/main/java/wtf/tks/bots/Config.java
+/config/config.properties
