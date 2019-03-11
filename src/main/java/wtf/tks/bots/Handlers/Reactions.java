@@ -63,30 +63,6 @@ public class Reactions extends ListenerAdapter {
 							config.getProp("bottlePostDecline"));
 				}
 			}
-			
-			
-			if (event.getReaction().getReactionEmote().getName()
-					.equals(config.getProp("votePositiveEmoji"))) {
-				postMsg(event.getMessageId(), config.getProp("chBottlePost"));
-				sendConfirmation(splitMessage(
-						jda.getTextChannelById(config.getProp("chAdminPost"))
-								.getMessageById(event.getMessageId()).complete()
-								.getContentDisplay(),
-						"(?<=###)(.*)(?=###)"), config.getProp("bottlePostAccept"));
-				delMsg(event.getMessageId());
-				
-			} else if (event.getReaction().getReactionEmote().getName().equals(
-					config.getProp("voteNegativeEmoji"))) {
-				
-				
-				sendConfirmation(splitMessage(
-						jda.getTextChannelById(config.getProp("chAdminPost"))
-								.getMessageById(event.getMessageId()).complete()
-								.getContentDisplay(),
-						"(?<=###)(.*)(?=###)"), config.getProp("bottlePostDecline"));
-				delMsg(event.getMessageId());
-				
-			}
 		}
 	}
 	
