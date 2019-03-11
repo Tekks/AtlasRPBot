@@ -50,17 +50,20 @@ public class Messages extends ListenerAdapter {
 		
 		if (event.isFromType(ChannelType.PRIVATE)) {
 			guild = jda.getGuildById(config.getProp("serverId"));
+			
 			if (guild.getMember(event.getAuthor()).getRoles()
 					.contains(guild.getRoleById(config.getProp("rolePlayerId")))) {
 				log.info("Message Received: " + event.getAuthor().getAsTag() + " Command: " +
 						 event.getMessage().getContentDisplay());
 				if (displayMessage.startsWith(PREFIX + BottlePost.COMMAND)) {
 					bottlePost = new BottlePost(event);
-				} else if (displayMessage.startsWith(PREFIX + Help.COMMAND)) {
-					help = new Help(event);
 				} else if (displayMessage.startsWith(PREFIX + Gossip.COMMAND)) {
 					gossip = new Gossip(event);
+				} else if (displayMessage.startsWith(PREFIX + Help.COMMAND)) {
+					help = new Help(event);
 				}
+			} else if (displayMessage.startsWith(PREFIX + Help.COMMAND)) {
+				help = new Help(event);
 			} else {
 				event.getChannel().sendMessage("❌ Keine gültige Berechtigung").queue();
 			}
