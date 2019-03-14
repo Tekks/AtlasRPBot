@@ -4,18 +4,13 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.entities.Game;
 import org.apache.log4j.*;
-import org.json.simple.parser.ParseException;
-import wtf.tks.bots.Commands.Help;
 import wtf.tks.bots.Handlers.Membership;
 import wtf.tks.bots.Handlers.Messages;
 import wtf.tks.bots.Handlers.Reactions;
 import wtf.tks.bots.Handlers.SupportTracker;
 
 import javax.security.auth.login.LoginException;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 public class Launcher {
 	
@@ -37,6 +32,7 @@ public class Launcher {
 		jda.addEventListener(new Messages());
 		jda.addEventListener(new Reactions());
 		jda.addEventListener(new Membership());
+		jda.addEventListener(new SupportTracker());
 		
 	}
 	
