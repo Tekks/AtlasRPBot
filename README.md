@@ -5,7 +5,7 @@
 This bot serves as a neutralizer of texts from players in an RP environment. 
 It posts anonymously texts which are read in advance by moderators.
 
-##Functions
+## Functions
 
 ### BottlePost
 
