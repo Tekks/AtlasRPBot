@@ -40,7 +40,7 @@ public class Help {
 				.addField(
 						config.getProp("prefix") + Config.SETCOMMAND +
 						" Parameter---neuerKonfigurationsWert",
-						"Setzt einen neuen Parameterwert",
+						"Setzt einen neuen Konfigurationswert",
 						false)
 				.build());
 		event.getChannel().sendMessage(mb.build()).queue();
