@@ -21,7 +21,7 @@ public class Gossip {
 	private MessageReceivedEvent event;
 	private Message message;
 	private MessageChannel channel;
-	private String displayMessage;
+	private String dpMessage;
 	private MessageChannel chAdminBottlePost;
 	
 	public Gossip(MessageReceivedEvent event) {
@@ -33,8 +33,14 @@ public class Gossip {
 		this.message = event.getMessage();
 		this.channel = event.getChannel();
 		
-		displayMessage = message.getContentDisplay();
-		rawMessage = displayMessage.replaceAll("(.*)" + Gossip.COMMAND, "");
+		dpMessage = message.getContentDisplay();
+		rawMessage = dpMessage.replaceAll("(.*)" + Gossip.COMMAND, "");
+		
+		if (rawMessage.trim().length() <= 0) {
+			event.getChannel().sendMessage("❌ Bitte eine Nachricht nach dem Befehl angeben!")
+					.queue();
+			return;
+		}
 		
 		if (Character.isWhitespace(rawMessage.charAt(0))) {
 			rawMessage.replaceFirst("(.*)", "");

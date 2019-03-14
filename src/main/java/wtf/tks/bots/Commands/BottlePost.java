@@ -38,14 +38,17 @@ public class BottlePost {
 		
 		displayMessage = message.getContentDisplay();
 		rawMessage = displayMessage.replaceAll("(.*)" + BottlePost.COMMAND, "");
+		if (rawMessage.trim().length() <= 0) {
+			event.getChannel().sendMessage("❌ Bitte eine Nachricht nach dem Befehl angeben!")
+					.queue();
+			return;
+		}
 		
 		if (Character.isWhitespace(rawMessage.charAt(0))) {
 			rawMessage.replaceFirst(" ", "");
 		}
 		
 		encryption = setEncryption();
-		
-		
 		makeMessage();
 	}
 	
